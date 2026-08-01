@@ -1,0 +1,13 @@
+# NeMo Gym named sandbox block for Fystash (Loop 96 Path B).
+# Pass alongside agent configs: gym env start --config .../fystash.yaml
+# Register out-of-tree: from integrations.nemo_gym import register; register()
+
+sandbox:
+  default_metadata:
+    sandbox-api: fystash-room-api
+  fystash:
+    connection:
+      endpoint: ${oc.env:FYSTASH_API,https://api.fystash.ai}
+      api_key: ${oc.env:FYSTASH_API_KEY}
+      # Optional; defaults to nemo-gym
+      # agent_id: nemo-gym

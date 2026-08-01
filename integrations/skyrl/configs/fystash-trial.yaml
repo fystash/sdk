@@ -1,0 +1,21 @@
+# @package harbor_trial_config
+#
+# Fystash overlay for SkyRL Harbor trials (Loop 97).
+# Merge / pass alongside SkyRL's default harbor_trial_config, or override via CLI:
+#   harbor_trial_config.environment.type=fystash
+#
+# Requires Harbor with EnvironmentType.FYSTASH ([harbor#2491](https://github.com/harbor-framework/harbor/pull/2491))
+# and FYSTASH_API_KEY. See docs/skyrl-fystash.md.
+
+environment:
+  # Options after Harbor merge: daytona, docker, e2b, modal, runloop, gke, fystash
+  type: fystash
+
+  override_cpus: 1
+  override_memory_mb: 1024
+  override_storage_mb: 1024
+  suppress_override_warnings: true
+
+  # Fystash reads FYSTASH_API / FYSTASH_API_KEY / FYSTASH_TEMPLATE_ID from the env.
+  # Do not copy Daytona auto_stop kwargs here.
+  kwargs: {}

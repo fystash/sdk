@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "fystash": {
+      "command": "uvx",
+      "args": ["fystash-mcp"],
+      "env": {
+        "FYSTASH_API": "https://api.fystash.ai",
+        "FYSTASH_API_KEY": "key-…"
+      }
+    }
+  }
+}
