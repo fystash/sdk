@@ -1,16 +1,21 @@
 # Design-partner invite — Fystash
 
-You are invited to try Fystash: **Start free → copy an API key → run an episode batch on public HTTPS** — no SSH, no us on your box.
+You are invited to try Fystash: **Start free → copy an API key → run an
+Episode batch on public HTTPS** — no SSH and no Fystash access to your hosts.
 
-The multi-agent sandbox for **RL training**: warm Fystash rooms, episode batches, Harbor provider, capacity reserve, trajectory export. Coding-agent MCP remains available as a secondary path.
+The **episode runtime for RL environments**: versioned Episode specs, warm
+Firecracker environments, Harbor trials, capacity reservations, partner-owned
+rewards, and destroy-safe trajectory export.
 
 ## What Fystash is
 
-Fystash supplies **sandboxed multi-agent rooms** for RL training and interactive agents. Shared drive + fabric messaging. It is **not** an LLM product and not a competitor on gym/task content — bring your envs, graders, and models.
+Fystash turns an environment, policy reference, verifier, and collector
+specification into one managed Episode lifecycle. Bring your policy,
+environment, tasks, and reward logic — we run the episodes.
 
 ```text
-Org → Episode batch → Room ↔ Sandbox + Fabric + Drive
-     (Harbor / OpenEnv-style adapters at the edge)
+Harness → EpisodeBatch → Episode → environment → verifier → trajectory/reward
+                              └─ lower-level Room/Sandbox APIs remain available
 ```
 
 ## Topology disclosure
@@ -41,16 +46,22 @@ import os
 from fystash.room import RoomClient
 
 c = RoomClient(os.environ["FYSTASH_API"], os.environ["FYSTASH_API_KEY"])
-batch = c.create_episode_batch(count=4, template_id="default", seed=42)
+spec = {
+    "schema_version": "fystash.episode.v1",
+    "environment": {"template_id": "default"},
+    "policy_ref": {"name": "design-partner-policy", "version": "trial-1"},
+    "verifier": {"mode": "shared"},
+    "collector": {"format": "atif"},
+    "execution": {"timeout_s": 900, "cleanup": "retain"},
+}
+batch = c.create_episode_batch(count=4, episode=spec, seed=42)
 print(batch["batch_id"], batch["created_count"])
 c.destroy_episode_batch(batch["batch_id"])
 ```
 
-Docs: [RL training](https://docs.fystash.ai/get-started/rl-training) · [Episodes](https://docs.fystash.ai/guides/episodes) · [Harbor](https://docs.fystash.ai/guides/harbor) · [Capacity](https://docs.fystash.ai/guides/capacity-and-trajectories).
+Docs: [RL training](https://docs.fystash.ai/get-started/rl-training) · [Episodes guide](https://docs.fystash.ai/guides/episodes) · [Episodes API](https://docs.fystash.ai/api/episodes) · [Harbor](https://docs.fystash.ai/guides/harbor) · [Capacity and trajectories](https://docs.fystash.ai/guides/capacity-and-trajectories).
 
 5. Optional coding path: install MCP (`uvx fystash-mcp`) — [Connect agent](https://docs.fystash.ai/get-started/connect-agent).
-
-Full walkthrough: [RL training](https://docs.fystash.ai/get-started/rl-training) · [Episodes](https://docs.fystash.ai/guides/episodes).
 
 ## Templates
 
@@ -59,13 +70,12 @@ Full walkthrough: [RL training](https://docs.fystash.ai/get-started/rl-training)
 | `default` | Episode / coding default | 256 MiB |
 | `browser` | Chromium + product CDP URL | 2048 MiB |
 | `desktop` | XFCE + computer-use + noVNC | 1536 MiB |
-| `docker` | Docker Engine in-guest | 2048 MiB |
+| `docker` | Docker Engine in-guest | 16384 MiB / 6 vCPU |
 
-## Honesty card (latency)
+## Latency notes
 
 - **Never mix create and resume columns.** Create is pool restore wall-clock; resume is standby→resume hot.
-- Concurrent episode creates share warm pool depth (**32** on prod); use `strategy=wave` or reserve capacity when `count` exceeds depth.
-- Create vs resume are different clocks — see [docs.fystash.ai](https://docs.fystash.ai).
+- Concurrent episode creates share warm pool depth (**24** on prod — current `/health`); use `strategy=wave` or reserve capacity when `count` exceeds depth.
 - Capacity `hard_l1_fence` is single-host — not multi-region.
 
 ## Support
