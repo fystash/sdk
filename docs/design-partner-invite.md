@@ -81,8 +81,4 @@ Docs: [RL training](https://docs.fystash.ai/get-started/rl-training) · [Episode
 ## Support
 
 - **Slack (preferred for quick questions):** [Fystash Partners](https://join.slack.com/t/fystashpartners/shared_invite/zt-44yuea11h-KWEkIootL2rShugQkQ~P0g) → `#design-partners`
-- **Email:** **support@fystash.ai** with your org id and a paste of `/health` if creates fail. Do not send API keys in email if you can avoid it — rotate if exposed.
-
-## Out of this invite
-
-Rootless docker, N>64 density claims, bare-metal latency claims, full Harbor dataset green as our gate.
+- **Email:** **support@fystash.ai** with your org id and a paste of `/health` if creates fail.
